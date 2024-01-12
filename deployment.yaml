@@ -1,0 +1,50 @@
+# DEPLOY TO AWS EKS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: marketplace
+    labels:
+        app: marketplace
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: marketplace
+    template:
+        metadata:
+            labels:
+                app: marketplace
+        spec:
+            containers:
+                - name: marketplace
+                  image: 840615330131.dkr.ecr.us-east-1.amazonaws.com/marketplace:latest
+                  ports:
+                      - containerPort: 5000
+                  env:
+                      - name: RECOMMENDATIONS_HOST
+                        value: recommendations
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: recommendations
+    labels:
+        app: recommendations
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: recommendations
+    template:
+        metadata:
+            labels:
+                app: recommendations
+        spec:
+            containers:
+                - name: recommendations
+                  image: 840615330131.dkr.ecr.us-east-1.amazonaws.com/recommendations:latest
+                  ports:
+                      - containerPort: 50051

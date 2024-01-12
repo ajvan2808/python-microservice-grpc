@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+// define your book categories, and each category is also assigned a numeric ID.
+enum BookCategory {
+  MYSTERY = 0;
+  SCIENCE_FICTION = 1;
+  SELF_HELP = 2;
+}
+
+// define your API request. A message contains fields, each of a specific type
+// int32: bit integer
+message RecommendationRequest {
+  int32 user_id = 1;
+  BookCategory category = 2;
+  int32 max_results = 3;
+}
+
+// define a type use for book recommendation
+message BookRecommendation {
+  int32 id = 1;
+  string title = 2;
+}
+
+// define Recommendations microservice response
+// Note: repeated keyword, which indicates that the response actually has a list of BookRecommendation objects.
+message RecommendationResponse {
+  repeated BookRecommendation recommendations = 1;
+}
+
+
+// define the method of the API.
+// This like a function or a method on a class.
+// It takes a RecommendationRequest and returns a RecommendationResponse.
+service Recommendations {
+  rpc Recommend (RecommendationRequest) returns (RecommendationResponse);
+}
+
+// rpc stands for remote procedure call.
+// You can call an RPC just like a normal function in Python.
+// But the implementation of the RPC executes on another server, which is what makes it a remote procedure call.

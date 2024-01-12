@@ -1,0 +1,77 @@
+# LOCAL DEPLOYMENT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: marketplace
+    labels:
+        app: marketplace
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: marketplace
+    template:
+        metadata:
+            labels:
+                app: marketplace
+        spec:
+            containers:
+                - name: marketplace
+                  image: hhvn/marketplace:latest
+                  env:
+                      - name: RECOMMENDATIONS_HOST
+                        value: recommendations
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: recommendations
+    labels:
+        app: recommendations
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: recommendations
+    template:
+        metadata:
+            labels:
+                app: recommendations
+        spec:
+            containers:
+                - name: recommendations
+                  image: hhvn/recommendations:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+    # When you create a Service, Kubernetes essentially creates a DNS hostname with the same name within the cluster.
+    # So any microservice in your cluster can send a request to recommendations.
+    # Kubernetes will forward this request to one of the pods in your Deployment.
+    name: recommendations
+spec:
+    selector:
+        # This line connects the Service to the Deployment.
+        # It tells Kubernetes to forward requests to recommendations to one of the pods in the recommendations Deployment.
+        # This must match one of the key-value pairs in the labels of the Deployment.
+        app: recommendations
+    ports:
+        - protocol: TCP
+          port: 50051
+          targetPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: marketplace
+spec:
+    # marketplace needs to be accessible from outside the Kubernetes cluster,
+    # whereas recommendations only needs to be accessible inside the cluster.
+    type: LoadBalancer
+    selector:
+        app: marketplace
+    ports:
+        - protocol: TCP
+          port: 5000
+          targetPort: 5000
