@@ -7,7 +7,6 @@
 </div>
 
 <p align="center">✨ A website implementing Python microservice with gRPC, Docker, Kubernetes ✨</p>
-<hr>
 
 📌 **Marketplace** will be a very minimal web app that displays a list of books to the user. \
 📌 **Recommendations** will be a microservice that provides a list of books in which the user may be interested. \
